@@ -1,0 +1,257 @@
+<?xml version="1.0"?>
+<robot name="RAI Robot">
+
+<!-- Base Link -->
+<link name="base_link">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Base.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.1 0.1 0.1 1.0" />
+        </material>
+    </visual>
+</link>
+
+<!-- Arm 1 -->
+<link name="arm_link_1">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Arm.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.3 0.3 0.3 1.0" />
+        </material>
+    </visual>
+</link>
+<link name="hub_link_1">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Hub.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.5 0.5 0.5 1.0" />
+        </material>
+    </visual>
+</link>
+<link name="pen_link_1">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Pen.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.1 0.1 0.8 1.0" />
+        </material>
+    </visual>
+</link>
+
+<!-- Arm 2 -->
+<link name="arm_link_2">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Arm.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.3 0.3 0.3 1.0" />
+        </material>
+    </visual>
+</link>
+<link name="hub_link_2">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Hub.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.5 0.5 0.5 1.0" />
+        </material>
+    </visual>
+</link>
+<link name="pen_link_2">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Pen.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.1 0.1 0.8 1.0" />
+        </material>
+    </visual>
+</link>
+
+<!-- Arm 3 -->
+<link name="arm_link_3">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Arm.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.3 0.3 0.3 1.0" />
+        </material>
+    </visual>
+</link>
+<link name="hub_link_3">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Hub.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.5 0.5 0.5 1.0" />
+        </material>
+    </visual>
+</link>
+<link name="pen_link_3">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Pen.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.1 0.1 0.8 1.0" />
+        </material>
+    </visual>
+</link>
+
+<!-- Arm 4 -->
+<link name="arm_link_4">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Arm.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.3 0.3 0.3 1.0" />
+        </material>
+    </visual>
+</link>
+<link name="hub_link_4">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Hub.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.5 0.5 0.5 1.0" />
+        </material>
+    </visual>
+</link>
+<link name="pen_link_4">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Pen.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.1 0.1 0.8 1.0" />
+        </material>
+    </visual>
+</link>
+
+<!-- Canvas Link -->
+<link name="canvas_link">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Canvas.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.8 0.8 0.8 1.0" />
+        </material>
+    </visual>
+</link>
+
+<!-- Joints -->
+<!-- Canvas joint -->
+<joint name="base_to_canvas" type="continuous">
+    <parent link="base_link" />
+    <child link="canvas_link" />
+    <origin xyz="0 0 0.75" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit effort="10" velocity="0.1" />
+</joint>
+
+<!-- Arm 1 joints -->
+<joint name="base_to_hub_1" type="revolute">
+    <parent link="base_link" />
+    <child link="hub_link_1" />
+    <origin xyz="1.17 1.17 0.7" rpy="0 0 -0.7854" />
+    <axis xyz="0 0 1" />
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="1.0" />
+</joint>
+<joint name="hub_to_arm_1" type="prismatic">
+    <parent link="hub_link_1" />
+    <child link="arm_link_1" />
+    <origin xyz="0 0 0.285" rpy="0 0 0" />
+    <axis xyz="0 -1 0" />
+    <limit lower="-0.67" upper="0.67" effort="10" velocity="1.0" />
+</joint>
+<joint name="arm_to_pen_1" type="prismatic">
+    <parent link="arm_link_1" />
+    <child link="pen_link_1" />
+    <origin xyz="0 -1.0 0" rpy="0 0 0" />
+    <axis xyz="0 0 -1" />
+    <limit lower="0.0" upper="0.045" effort="10" velocity="1.0" />
+</joint>
+
+<!-- Arm 2 joints -->
+<joint name="base_to_hub_2" type="revolute">
+    <parent link="base_link" />
+    <child link="hub_link_2" />
+    <origin xyz="-1.17 1.17 0.7" rpy="0 0 -2.3562" />
+    <axis xyz="0 0 1" />
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="1.0" />
+</joint>
+<joint name="hub_to_arm_2" type="prismatic">
+    <parent link="hub_link_2" />
+    <child link="arm_link_2" />
+    <origin xyz="0 0 0.285" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-0.67" upper="0.67" effort="10" velocity="1.0" />
+</joint>
+<joint name="arm_to_pen_2" type="prismatic">
+    <parent link="arm_link_2" />
+    <child link="pen_link_2" />
+    <origin xyz="0 1.0 0" rpy="0 0 0" />
+    <axis xyz="0 0 -1" />
+    <limit lower="0.0" upper="0.045" effort="10" velocity="1.0" />
+</joint>
+
+<!-- Arm 3 joints -->
+<joint name="base_to_hub_3" type="revolute">
+    <parent link="base_link" />
+    <child link="hub_link_3" />
+    <origin xyz="-1.17 -1.17 0.7" rpy="0 0 -0.7854" />
+    <axis xyz="0 0 1" />
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="1.0" />
+</joint>
+<joint name="hub_to_arm_3" type="prismatic">
+    <parent link="hub_link_3" />
+    <child link="arm_link_3" />
+    <origin xyz="0 0 0.285" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-0.67" upper="0.67" effort="10" velocity="1.0" />
+</joint>
+<joint name="arm_to_pen_3" type="prismatic">
+    <parent link="arm_link_3" />
+    <child link="pen_link_3" />
+    <origin xyz="0 1.0 0" rpy="0 0 0" />
+    <axis xyz="0 0 -1" />
+    <limit lower="0.0" upper="0.045" effort="10" velocity="1.0" />
+</joint>
+
+<!-- Arm 4 joints -->
+<joint name="base_to_hub_4" type="revolute">
+    <parent link="base_link" />
+    <child link="hub_link_4" />
+    <origin xyz="1.17 -1.17 0.7" rpy="0 0 -2.3562" />
+    <axis xyz="0 0 1" />
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="1.0" />
+</joint>
+<joint name="hub_to_arm_4" type="prismatic">
+    <parent link="hub_link_4" />
+    <child link="arm_link_4" />
+    <origin xyz="0 0 0.285" rpy="0 0 0" />
+    <axis xyz="0 -1 0" />
+    <limit lower="-0.67" upper="0.67" effort="10" velocity="1.0" />
+</joint>
+<joint name="arm_to_pen_4" type="prismatic">
+    <parent link="arm_link_4" />
+    <child link="pen_link_4" />
+    <origin xyz="0 -1.0 0" rpy="0 0 0" />
+    <axis xyz="0 0 -1" />
+    <limit lower="0.0" upper="0.045" effort="10" velocity="1.0" />
+</joint>
+</robot>

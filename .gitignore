@@ -1,0 +1,8 @@
+!.gitignore
+/build/
+/old/
+/.vscode/
+
+CMakeUserPresets.json
+vcpkg-configuration.json
+*.lnk
