@@ -6,6 +6,8 @@
 glRobotInterface is a C++ API for visualizing (FUTURE: and controlling) robots defined via URDF files and ran in the real-world. 
 It renders URDF Scenes using OpenGL on a separate thread and provides an API to link real-time encoder values to the model joints to move in real-time.
 
+<img width="1194" height="688" alt="image" src="https://github.com/user-attachments/assets/04729483-250f-45fe-952f-731f6e753886" />
+
 ---
 
 ## Quick Start
