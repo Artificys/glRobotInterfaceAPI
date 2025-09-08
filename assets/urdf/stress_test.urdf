@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot name="Stress Test">
+
+<!-- Base Link -->
+<link name="house_link">
+    <visual>
+        <geometry>
+            <mesh filename="../models/House Tissue Box.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.1 0.1 0.1 1.0" />
+        </material>
+    </visual>
+</link>
+<link name="arm_link">
+    <visual>
+        <geometry>
+            <mesh filename="../models/Arm.stl" />
+        </geometry>
+        <material>
+            <color rgba="0.1 0.1 0.1 1.0" />
+        </material>
+    </visual>
+</link>
+
+<!-- Joints -->
+<!-- Canvas joint -->
+<joint name="house_to_canvas" type="continuous">
+    <parent link="house_link" />
+    <child link="arm_link" />
+    <origin xyz="0 0 0.75" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit effort="10" velocity="0.1" />
+</joint>
+
+</robot>

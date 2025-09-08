@@ -12,6 +12,21 @@ auto signalHandler = [](int) {
     stopFlag = true;
 };
 
+/** TO DO:
+ * - Add timer at bottom of window for total frame time, model update time, render time
+ * - Add interface sidebar for recording and playback of joint positions
+ * - Add interface sidebar for changing model color, lighting, background color
+ * 
+ * - Add texture support
+ * - Add more advanced lighting
+ * - Add preset camera views
+ * - Add more URDF geometry support (cylinder, mesh, etc)
+ * 
+ * - Test moving objects (When there isn't a stationary base link)
+ * - Test large models (e.g. humanoid)
+ * - Test models with major vertex counts
+ */
+
 /**
  *  Example of how to use the Interface class to load a URDF model and control its joints.
  */
