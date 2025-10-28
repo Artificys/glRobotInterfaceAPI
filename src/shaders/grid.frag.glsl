@@ -9,8 +9,8 @@ out vec4 FragColor;
 
 void main() {
     float dist = length(fragPos.xy); // distance from origin in XY plane
-    float fadeStart = 10.0;
-    float fadeEnd = 50.0;
+    float fadeStart = uCameraPos.z * 5.0;
+    float fadeEnd = uCameraPos.z * 10.0;
     float opacity_falloff = smoothstep(1.0, 0.0, (dist - fadeStart) / (fadeEnd - fadeStart));
 
     FragColor = vec4(uColor, 1.0) * opacity_falloff;

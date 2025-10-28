@@ -39,7 +39,7 @@ int main()
     std::atomic<float> baseHubEncoder { 0.0f };
     std::atomic<float> armJoint1Encoder { 0.0f };
 
-    Interface interface;
+    RobotInterface interface;
     if (!interface.init("urdf/Robot.urdf")) {
         std::cerr << "Failed to initialize interface.\n";
         return -1;

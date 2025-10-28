@@ -2,18 +2,16 @@
 
 // ---------------- Callback Functions ----------------
 
-static void framebufferSizeCb(GLFWwindow* w, int width, int height)
-{
-    auto* self = static_cast<Interface*>(glfwGetWindowUserPointer(w));
+static void framebufferSizeCb(GLFWwindow* w, int width, int height) {
+    auto* self = static_cast<RobotInterface*>(glfwGetWindowUserPointer(w));
     if (self && self->camera) {
         self->camera->onFramebufferResize(width, height);
     }
     glViewport(0, 0, width, height);
 }
 
-static void mouseButtonCb(GLFWwindow* w, int button, int action, int)
-{
-    auto* self = static_cast<Interface*>(glfwGetWindowUserPointer(w));
+static void mouseButtonCb(GLFWwindow* w, int button, int action, int) {
+    auto* self = static_cast<RobotInterface*>(glfwGetWindowUserPointer(w));
     if (self && self->camera) {
         double x, y;
         glfwGetCursorPos(w, &x, &y);
@@ -21,17 +19,15 @@ static void mouseButtonCb(GLFWwindow* w, int button, int action, int)
     }
 }
 
-static void cursorPosCb(GLFWwindow* w, double x, double y)
-{
-    auto* self = static_cast<Interface*>(glfwGetWindowUserPointer(w));
+static void cursorPosCb(GLFWwindow* w, double x, double y) {
+    auto* self = static_cast<RobotInterface*>(glfwGetWindowUserPointer(w));
     if (self && self->camera) {
         self->camera->onCursorMove(x, y);
     }
 }
 
-static void scrollCb(GLFWwindow* w, double, double yoff)
-{
-    auto* self = static_cast<Interface*>(glfwGetWindowUserPointer(w));
+static void scrollCb(GLFWwindow* w, double, double yoff) {
+    auto* self = static_cast<RobotInterface*>(glfwGetWindowUserPointer(w));
     if (self && self->camera) {
         self->camera->onScroll(yoff);
     }
@@ -39,46 +35,42 @@ static void scrollCb(GLFWwindow* w, double, double yoff)
 
 // ---------------- Interface Implementation ----------------
 
-bool Interface::init(const std::string& modelPath,
-    const std::string& vertShaderPath,
-    const std::string& fragShaderPath)
-{
-    m_modelPath = modelPath;
-    m_defaultVertShaderPath = vertShaderPath;
-    m_defaultFragShaderPath = fragShaderPath;
+bool RobotInterface::init(const std::string& modelPath,
+                          const std::string& vertShaderPath,
+                          const std::string& fragShaderPath) {
+    this->modelPath = modelPath;
+    defaultVertShaderPath = vertShaderPath;
+    defaultFragShaderPath = fragShaderPath;
 
-    m_running = false;
-    m_thread = std::thread(&Interface::threadController, this);
-
-    return true;
-}
-
-bool Interface::init(const std::string& modelPath)
-{
-    m_modelPath = modelPath;
-
-    m_running = false;
-    m_thread = std::thread(&Interface::threadController, this);
+    running = false;
+    thread = std::thread(&RobotInterface::threadController, this);
 
     return true;
 }
 
-void Interface::threadController()
-{
+bool RobotInterface::init(const std::string& modelPath) {
+    this->modelPath = modelPath;
+
+    running = false;
+    thread = std::thread(&RobotInterface::threadController, this);
+
+    return true;
+}
+
+void RobotInterface::threadController() {
     if (!initThread()) {
         std::cerr << "Failed to initialize interface thread.\n";
         return;
     }
 
-    while (!m_running) {
+    while (!running) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Based time on nothing
     }
 
     loop();
 }
 
-bool Interface::initThread()
-{
+bool RobotInterface::initThread() {
 #ifdef DEBUG_MODE
     std::cout << "Initializing interface...\n";
 #endif
@@ -94,7 +86,13 @@ bool Interface::initThread()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    window = glfwCreateWindow(1280, 720, "Robot Interface", nullptr, nullptr);
+#if IS_WINDOW_RESIZABLE
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+#else
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+#endif
+
+    window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Robot Interface", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         std::cerr << "Failed to create GLFW window\n";
@@ -114,20 +112,20 @@ bool Interface::initThread()
         return false;
     }
 
-    defaultShaderProgram = loadShaders(m_defaultVertShaderPath, m_defaultFragShaderPath);
+    defaultShaderProgram = loadShaders(defaultVertShaderPath, defaultFragShaderPath);
     if (defaultShaderProgram == 0) {
         std::cerr << "Failed to load/compile default shaders\n";
         return false;
     }
 
-    gridShaderProgram = loadShaders(m_gridVertShaderPath, m_gridFragShaderPath);
+    gridShaderProgram = loadShaders(gridVertShaderPath, gridFragShaderPath);
     if (gridShaderProgram == 0) {
         std::cerr << "Failed to load/compile grid shaders\n";
         return false;
     }
 
-    std::lock_guard<std::mutex> lock(m_modelMutex);
-    model = new Model(m_modelPath.c_str());
+    std::lock_guard<std::mutex> lock(modelMutex);
+    model = new Model(modelPath.c_str());
     if (!model->load()) {
         delete model;
         model = nullptr;
@@ -165,17 +163,15 @@ bool Interface::initThread()
     return true;
 }
 
-void Interface::spin()
-{
-    if (m_running) {
+void RobotInterface::spin() {
+    if (running) {
         std::cerr << "Interface is already running.\n";
         return;
     }
-    m_running = true;
+    running = true;
 }
 
-void Interface::loop()
-{
+void RobotInterface::loop() {
 #ifdef DEBUG_MODE
     std::cout << "Entering interface loop...\n";
 #endif
@@ -183,7 +179,7 @@ void Interface::loop()
     auto last = std::chrono::steady_clock::now();
     GLint locV, locP, locC;
 
-    while (m_running) {
+    while (running) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         auto now = std::chrono::steady_clock::now();
@@ -191,7 +187,7 @@ void Interface::loop()
         last = now;
 
         glm::mat4 proj = glm::perspective(glm::radians(45.0f),
-            camera->aspect, 0.01f, 200.0f);
+                                          camera->aspect, 0.01f, 200.0f);
         glm::mat4 view = camera->view();
 
         glUseProgram(defaultShaderProgram);
@@ -203,7 +199,7 @@ void Interface::loop()
         glUniformMatrix4fv(locV, 1, GL_FALSE, glm::value_ptr(view));
         glUniform3fv(locC, 1, glm::value_ptr(camera->eye()));
 
-        std::lock_guard<std::mutex> lock(m_modelMutex);
+        std::lock_guard<std::mutex> lock(modelMutex);
         if (model) {
             for (auto& [jointName, jointPtr] : jointLinks) {
                 model->updatePosition(jointName, jointPtr->load());
@@ -230,7 +226,7 @@ void Interface::loop()
 #ifdef DEBUG_MODE
             std::cout << "Window close requested.\n";
 #endif
-            m_running = false;
+            running = false;
         }
     }
 
@@ -238,14 +234,13 @@ void Interface::loop()
     std::raise(SIGINT);
 }
 
-void Interface::shutdown()
-{
+void RobotInterface::shutdown() {
 #ifdef DEBUG_MODE
     std::cout << "Shutting down interface...\n";
 #endif
-    m_running = false;
-    if (m_thread.joinable()) {
-        m_thread.join();
+    running = false;
+    if (thread.joinable()) {
+        thread.join();
     }
     if (model) {
         delete model;
@@ -262,8 +257,7 @@ void Interface::shutdown()
     glfwTerminate();
 }
 
-void Interface::initGrid(int gridSize = 10, float spacing = 1.0f)
-{
+void RobotInterface::initGrid(int gridSize = 10, float spacing = 1.0f) {
     // Only generate vertices once
     if (gridVertices.empty()) {
         for (int i = -gridSize; i <= gridSize; ++i) {
@@ -281,7 +275,7 @@ void Interface::initGrid(int gridSize = 10, float spacing = 1.0f)
         glBindVertexArray(gridVAO);
         glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
         glBufferData(GL_ARRAY_BUFFER, gridVertices.size() * sizeof(glm::vec3),
-            gridVertices.data(), GL_STATIC_DRAW);
+                     gridVertices.data(), GL_STATIC_DRAW);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
         glEnableVertexAttribArray(0);
 
@@ -289,8 +283,7 @@ void Interface::initGrid(int gridSize = 10, float spacing = 1.0f)
     }
 }
 
-void Interface::drawGrid()
-{
+void RobotInterface::drawGrid() {
     GLint locColor = glGetUniformLocation(gridShaderProgram, "uColor");
 
     glBindVertexArray(gridVAO);
@@ -310,18 +303,16 @@ void Interface::drawGrid()
     glBindVertexArray(0);
 }
 
-void Interface::linkJoint(const std::string& jointName,
-    std::atomic<float>& jointPosition)
-{
+void RobotInterface::linkJoint(const std::string& jointName,
+                               std::atomic<float>& jointPosition) {
 #ifdef DEBUG_MODE
     std::cout << "Linking joint '" << jointName << "'\n";
 #endif
     jointLinks[jointName] = &jointPosition;
 }
 
-unsigned int Interface::loadShaders(const std::string& vertShaderPath,
-    const std::string& fragShaderPath)
-{
+unsigned int RobotInterface::loadShaders(const std::string& vertShaderPath,
+                                         const std::string& fragShaderPath) {
     unsigned int shaderProgram = 0;
 
     std::ifstream vertFile(vertShaderPath);
